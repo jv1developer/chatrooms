@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>Group Chat</title>
+    <script>
+        // Get new user's name:
+        var person = prompt("Please enter your name", "New User");
+        if (person != null) {
+            document.getElementById("demo").innerHTML =
+            "Hello " + person + "! How are you today?";
+        };
+    </script>
+    <script type="text/javascript">
+        // Confirmation box before closing window:
+        window.onbeforeunload = function() {
+            return "Did you save your stuff?"
+        };
+      </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type ="text/javascript">
+        $(document).ready(function (){                      // Check if the document is loaded and ready.
+    
+            var socket = io(); //1                          // Declare variable "socket".
+            socket.on('greeting', function (data) { //4     // Package and send the message to the server.
+                console.log(data.msg); //5
+                socket.emit('thankyou', { msg: 'Thank you for connecting me to Epic Button Game! -Client' }); //6
+            });
+
+            // Result of clicking Add Message button: 
+            socket.emit('startMessage', { msg: person });
+
+
+            // Display array of messages at start:
+            socket.on('startPosted', function(data) {
+                    $("h4").html(data.msg);
+                });
+            
+            // Display all previous message at start:
+            socket.on('postEveryone', function(data) {
+                    $("h4").html(data.msg);
+                });
+
+            // Result of clicking reset button:
+            $("#reset").click(function(){
+                 socket.emit('clickReset', { msg: 'Click Reset. - Client' });
+             });
+
+            socket.on('countZero', function(data) {
+                $("h2").html(data.msg);
+            });
+
+            // Result of clicking the green button:
+            $("#greenSubmit").click(function(){
+                 socket.emit('clickGreen', { msg: 'Click Green. - Client' });
+             });
+
+            socket.on('display', function(data) {
+                $("body").css("background-color", data.msg);
+            });
+
+            // Result of clicking the blue button:
+            $("#blueSubmit").click(function(){
+                 socket.emit('clickBlue', { msg: 'Click Blue. - Client' });
+             });
+
+            socket.on('display', function(data) {
+                $("body").css("background-color", data.msg);
+            });
+
+            // Result of clicking the pink button:
+            $("#pinkSubmit").click(function(){
+                 socket.emit('clickPink', { msg: 'Click Pink. - Client' });
+             });
+
+            socket.on('display', function(data) {
+                $("body").css("background-color", data.msg);
+            });
+            
+            // Result of clicking Add Message button:
+            $("#addMessage").click(function(){
+                event.preventDefault(); 
+                socket.emit('clickMessage', { msg: person+": "+$("#chatMessage").val() });
+             });
+            
+            // Receive checked message from server and display it down:
+            socket.on('messagePosted', function(data) {
+                $("h4").append("<br>"+data.msg);
+            });
+            
+            // $(myWindow).close(function() {
+            //     socket.emit('clickExit', { msg: person+" exited the chatroom."});
+            // });
+
+            // socket.on('exitMessage', function(data) {
+            //     $("h4").append("<br>"+data.msg);
+            // });
+
+            socket.on('userExit', function(data) {
+                $("h4").append("<br>"+data.msg);
+            })
+            
+         })
+    </script>
+</head>
+<body>
+    <h1>Group Chat</h1>
+    <h2></h2>
+    <h3></h3>
+    <h5>Push a button to change background color.</h5>
+    <input type="submit" id="greenSubmit" value="Green">
+    <input type="submit" id="blueSubmit" value="Blue">
+    <input type="submit" id="pinkSubmit" value="Pink">
+    <br>
+    <br>
+    <input type="text" id="chatMessage">
+    <input type="submit" id="addMessage" value="Add Message">
+    <br>
+    <br>
+    <input type="submit" id="reset" value="Reset count">
+    <br>
+    <h4></h4>
+    <h6></h6>
+</body>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>Survey Form - Result</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script type ="text/javascript">
+            $(document).ready(function (){                      // Check if the document is loaded and ready.
+        
+                var socket = io(); //1                          // Declare variable "socket".
+                socket.on('greeting', function (data) { //4     // Package and send the message to the server.
+                    $("p").append("This works."); //5
+                    socket.emit('posting_form', { msg: 'Submission is confirmed for Survey Form Revisited! -Client' }); //6
+                });
+                socket.on('random_number', function (data) {
+                    $("h3").append(data.msg); //5
+                });
+                socket.on('updated_message', function (data) {
+                    $("h5").append(data.msg); //5
+                    socket.emit('reply_message', { msg: 'I have received your message. -Client' });
+                });
+             })
+        </script>
+    </head>
+    <body>
+        <h1>Submitted Information:</h1>
+        <h2>Name: <%= yourName %></h2>
+        <h2>Location: <%= dojoLocation %></h2>
+        <h2>Favorite Language: <%= favoriteLanguage %></h2>
+        <h2>Comment: <%= comment %></h2>
+        <p></p>
+        <h5></h5>
+        <h3></h3>
+    </body>
+</html>
